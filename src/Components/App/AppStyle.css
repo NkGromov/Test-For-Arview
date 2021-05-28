@@ -1,3 +1,8 @@
+*,
+html {
+    box-sizing: border-box;
+}
+
 .container {
     max-width: 1200px;
     margin: auto;
@@ -52,6 +57,12 @@
 .calendar__calendarWrapper--disable {
     display: none;
 }
+.calendar__emptyList {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
 .calendar__descItem:last-child {
     border-bottom: none;
 }
@@ -83,12 +94,10 @@
     margin-bottom: 0;
 }
 .form__type {
-    box-sizing: border-box;
     width: 100%;
     padding: 10px;
 }
 .form__input {
-    box-sizing: border-box;
     width: 100%;
     padding: 10px;
 }

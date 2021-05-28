@@ -1,18 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { Field, Formik, Form } from "formik";
 import "react-calendar/dist/Calendar.css";
 import "./AppStyle.css";
 import * as Yup from "yup";
-import { addDay } from "../../Redux/AppReducer";
+import { addDay, allNewList } from "../../Redux/AppReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
+    const days = useSelector((state) => state.AppReducer.days);
     const [value, onChange] = useState(new Date());
     const [isForm, setIsForm] = useState(false);
+    const [list, setList] = useState(null);
+    const dispatch = useDispatch();
     const formShow = () => {
         setIsForm((prev) => !prev);
     };
+
+    const checkDay = (day) => {
+        onChange(day);
+        const find = days.filter((el) => el.day.getDate() === day.getDate() && el.day.getMonth() === day.getMonth() && el.day.getFullYear() === day.getFullYear());
+        if (find) setList(find);
+    };
+    const deleteItem = (id) => {
+        const newList = days.filter((el) => el.id !== id);
+        dispatch(allNewList(newList));
+    };
+
+    useEffect(() => {
+        checkDay(value);
+    }, [isForm, days]);
+    console.log(list);
     return (
         <>
             <section className="calendar">
@@ -21,7 +39,7 @@ const App = () => {
                     <div className="calendar__wrapper">
                         <div className="calendar__item">
                             <div className={`calendar__calendarWrapper ${isForm ? "calendar__calendarWrapper--disable" : ""}`}>
-                                <Calendar onChange={onChange} value={value} className="calendar__calendar" />
+                                <Calendar onChange={checkDay} value={value} className="calendar__calendar" />
                                 <button className="calendar__add calendar__button" onClick={formShow}>
                                     Добавить
                                 </button>
@@ -30,24 +48,21 @@ const App = () => {
                         </div>
                         <div className="calendar__item">
                             <div className="calendar__dayDesc">
-                                <div className="calendar__descItem">
-                                    <h2 className="calendar__descTitle">dsa</h2>
-                                    <span className="calendar__desc">ddsa</span>
-                                    <button className="calendar__change calendar__button">Редактировать</button>
-                                    <button className="calendar__delete calendar__button">Удалить</button>
-                                </div>
-                                <div className="calendar__descItem">
-                                    <h2 className="calendar__descTitle">dsa</h2>
-                                    <span className="calendar__desc">ddsa</span>
-                                    <button className="calendar__change calendar__button">Редактировать</button>
-                                    <button className="calendar__delete calendar__button">Удалить</button>
-                                </div>
-                                <div className="calendar__descItem">
-                                    <h2 className="calendar__descTitle">dsa</h2>
-                                    <span className="calendar__desc">ddsa</span>
-                                    <button className="calendar__change calendar__button">Редактировать</button>
-                                    <button className="calendar__delete calendar__button">Удалить</button>
-                                </div>
+                                {list && list.length > 0 ? (
+                                    list.map((el) => (
+                                        <div key={el.id} className="calendar__descItem">
+                                            <h2 className="calendar__descTitle">{el.name}</h2>
+                                            {el.secondOne && <span className="calendar__desc">{el.secondOne}</span>}
+                                            {el.secondTwo && <span className="calendar__desc">{el.secondTwo}</span>}
+
+                                            <button className="calendar__delete calendar__button" onClick={() => deleteItem(el.id)}>
+                                                Удалить
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <span className="calendar__emptyList">Пусто</span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -58,7 +73,6 @@ const App = () => {
 };
 
 const CalendarForm = ({ day, setIsForm }) => {
-    const ddd = useSelector((state) => state.AppReducer.days);
     const dispatch = useDispatch();
     const [type, setType] = useState({
         name: "Мероприятия",
@@ -67,8 +81,6 @@ const CalendarForm = ({ day, setIsForm }) => {
     });
     const ValidSchema = Yup.object().shape({
         name: Yup.string().required("Required"),
-        secondOne: Yup.string().required("Required"),
-        secondTwo: Yup.string().required("Required"),
     });
     const typeChange = (e) => {
         const type = e.target.value;
@@ -85,11 +97,11 @@ const CalendarForm = ({ day, setIsForm }) => {
     const closeForm = () => {
         setIsForm(false);
     };
-    console.log(ddd);
 
     const submitForm = (values) => {
         dispatch(
             addDay({
+                id: Math.random(),
                 day: day,
                 name: values.name,
                 type: type.name,
@@ -97,6 +109,8 @@ const CalendarForm = ({ day, setIsForm }) => {
                 secondTwo: values.secondTwo,
             })
         );
+
+        setIsForm(false);
     };
     return (
         <div className="calendar__form form">
