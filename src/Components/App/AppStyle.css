@@ -49,6 +49,9 @@
     right: 10px;
     top: 10px;
 }
+.calendar__calendarWrapper--disable {
+    display: none;
+}
 .calendar__descItem:last-child {
     border-bottom: none;
 }
@@ -58,5 +61,41 @@
     width: 100%;
     padding: 10px;
     font-size: 18px;
+    margin-top: 10px;
+}
+.form__Wrapper {
+    display: flex;
+    flex-direction: column;
+}
+.calendar__form {
+    max-width: 300px;
+    width: 100%;
+}
+.form__inutItem {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.form__inputTitlte {
+    display: block;
+    margin-bottom: 10px;
+}
+.form__inutItem:last-child {
+    margin-bottom: 0;
+}
+.form__type {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+}
+.form__input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+}
+
+.form__buttonWrapp {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
     margin-top: 10px;
 }
